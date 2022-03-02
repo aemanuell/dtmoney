@@ -33,5 +33,4 @@ export function App() {
       <GlobalStyle/>
     </TransactionsProvider>
   );
-}
-
+};
