@@ -1,60 +1,60 @@
-import { createContext, useEffect, useState, ReactNode, useContext } from "react";
-import { api } from "../services/api";
+import { api } from '../services/api';
+import { createContext, useEffect, useState, ReactNode, useContext } from 'react';
 
 interface Transaction {
-    id: number;
-    title: string;
-    amount: number;
-    type: string;
-    category: string;
-    createdAt: string;
-}
-
-type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>;
-
-interface TransactionsProviderPosps {
-    children: ReactNode;
+  id: number;
+  title: string;
+  amount: number;
+  type: string;
+  category: string;
+  createdAt: string;
 }
 
 interface TransactionsContextData {
-    transactions: Transaction[];
-    createTransaction: (transaction: TransactionInput) => Promise<void>;
+  transactions: Transaction[];
+  createTransaction: (transaction: TransactionInput) => Promise<void>;
+}
+
+type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>
+
+interface TransactionProviderProps {
+  children: ReactNode;
 }
 
 const TransactionsContext = createContext<TransactionsContextData>(
-    {} as TransactionsContextData
+  {} as TransactionsContextData
 );
 
-export function TransactionsProvider({ children }: TransactionsProviderPosps) {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+export function TransactionProvider({ children }: TransactionProviderProps ) {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-    useEffect(() => {
-        api.get('transactions')
-        .then(response => setTransactions(response.data.transactions))
-    }, []);
+  useEffect(() => {
+    api.get('transactions')
+    .then(response => setTransactions(response.data.transactions))
+  }, []);
 
-    async function createTransaction(transactionInput: TransactionInput) {
-        const response = await api.post('/transactions', {
-            ...transactionInput,
-            createdAt: new Date()
-        })
-        const {transaction} = response.data;
+  async function createTransaction(transactionInput: TransactionInput) {
+    const response = await api.post('/transactions', {
+      ...transactionInput,
+      createdAt: new Date(),
+    })
+    const { transaction } = response.data;
+    setTransactions([
+      ...transactions, 
+      transaction,
+    ]);
+  }
 
-        setTransactions([
-            ...transactions,
-            transaction,
-        ])
-    }
+  return (
+    <TransactionsContext.Provider value={{ transactions, createTransaction }}>
+      { children }
+    </TransactionsContext.Provider>
+  )
 
-    return(
-        <TransactionsContext.Provider value={{ transactions, createTransaction}} >
-            {children}
-        </TransactionsContext.Provider>
-    )
 }
 
 export function useTransactions() {
-    const context = useContext(TransactionsContext)
+  const context = useContext(TransactionsContext);
 
-    return context
+  return context;
 }
