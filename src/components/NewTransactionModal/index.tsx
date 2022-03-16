@@ -5,22 +5,23 @@ import incomeImg from '../../assets/income.svg';
 import outcomeImg from '../../assets/outcome.svg';
 import { useTransactions } from '../../hooks/useTransactions';
 import { Container, TransactionTypeContainer, RadioBox } from './styles';
+import { useTransactionModal } from '../../hooks/useTransactionModal';
 
 Modal.setAppElement('#root');
 
-interface NewTransactionModalProps {
-  isOpen: boolean; 
-  onRequestClose: () => void;
-}
-
-export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
+export function NewTransactionModal(){
 
   const { createTransaction } = useTransactions();
+  const { isNewTransationModalOpen, handleCloseModal } = useTransactionModal()
 
   const [title, setTitle] = useState('')
   const [amount, setAmount] = useState(0)
   const [category, setCategory] = useState('')
   const [type, setType] = useState('deposit');
+
+  function onRequestClose() {
+    handleCloseModal('newTransaction')
+  }
 
   async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
@@ -39,7 +40,7 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
 
   return (
     <Modal 
-      isOpen={ isOpen } 
+      isOpen={ isNewTransationModalOpen } 
       onRequestClose={ onRequestClose }
       overlayClassName="react-modal-overlay"
       className="react-modal-content"

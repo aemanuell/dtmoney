@@ -1,30 +1,21 @@
-import { useState } from 'react';
-import { Header } from './components/Header';
-import { GlobalStyle } from './styles/global';
-import { Dashboard } from './components/Dashboard';
-import { TransactionProvider } from './hooks/useTransactions';
-import { NewTransactionModal } from './components/NewTransactionModal';
+import { GlobalStyle } from './styles/global'
+
+import { TransactionsProvider } from './hooks/useTransactions'
+
+import { Header } from './components/Header'
+import { Dashboard } from './components/Dashboard'
+import { TransactionsModalProvider } from './hooks/useTransactionModal'
 
 export function App() {
-  const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
-
-  function handleOpenNewTransactionModal() {
-    setIsNewTransactionModalOpen(true);
-  }
-
-  function handleCloseNewTransactionModal() {
-    setIsNewTransactionModalOpen(false);
-  }
-
   return (
-    <TransactionProvider>
-      <Header onOpenNewTransactionModal={ handleOpenNewTransactionModal }/>
-      <Dashboard />
-      <NewTransactionModal 
-        isOpen={ isNewTransactionModalOpen }
-        onRequestClose = { handleCloseNewTransactionModal }
-      />
-      <GlobalStyle />
-    </TransactionProvider>
-  );
+    <TransactionsProvider>
+      <TransactionsModalProvider>
+      
+        <GlobalStyle />
+        <Header />
+        
+        <Dashboard />
+      </TransactionsModalProvider>
+    </TransactionsProvider>
+  )
 }

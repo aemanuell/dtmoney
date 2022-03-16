@@ -1,47 +1,76 @@
-import React from 'react';
-import { App } from './App';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
+
 import { createServer, Model } from 'miragejs'
+
+import { App } from './App'
 
 createServer({
   models: {
-    transaction: Model,
+    transaction: Model
   },
 
   seeds(server) {
     server.db.loadData({
       transactions: [
-      {
-        id: 1,
-        title: 'Freelance de website',
-        type: 'deposit',
-        category: 'Dev',
-        amount: 6000,
-        createdAt: new Date('2021-02-12 09:00:00')
-      },
-      {
-        id: 2,
-        title: 'Aluguel',
-        type: 'withdraw',
-        category: 'Casa',
-        amount: 1100,
-        createdAt: new Date('2021-02-14 11:00:00')
-      },
-    ]
+        {
+          id: 1,
+          title: 'Prestação de serviço Website',
+          amount: 12000,
+          type: 'deposit',
+          category: 'Rendimentos',
+          createdAt: new Date('2021-03-16 08:01:49')
+        },
+        {
+          id: 2,
+          title: 'Manutenção sistema IdealConstrutora',
+          amount: 3357.83,
+          type: 'deposit',
+          category: 'Rendimentos',
+          createdAt: new Date('2021-03-16 08:03:14')
+        },
+        {
+          id: 3,
+          title: 'Reforma estúdio',
+          amount: 15000,
+          type: 'withdraw',
+          category: 'Transferência',
+          createdAt: new Date('2021-03-16 10:12:43')
+        }
+      ]
     })
   },
 
   routes() {
-    this.namespace = 'api';
+    this.namespace = 'api'
+
     this.get('/transactions', () => {
       return this.schema.all('transaction')
     })
 
     this.post('/transactions', (schema, request) => {
-      const data = JSON.parse(request.requestBody)
-      return schema.create('transaction', data)
+      const newTransaction = JSON.parse(request.requestBody)
+
+      return schema.create('transaction', newTransaction)
     })
 
+    this.put('/transactions/:id', (schema, request) => {
+      const { id: transactionId } = request.params
+
+      const updatedTransaction = JSON.parse(request.requestBody)
+
+      schema.db.transactions.update(transactionId, updatedTransaction)
+
+      return {}
+    })
+
+    this.delete('/transactions/:id', (schema, request) => {
+      const { id: transactionId } = request.params
+
+      schema.db.transactions.remove(transactionId)
+
+      return {}
+    })
   }
 })
 
@@ -50,4 +79,4 @@ ReactDOM.render(
     <App />
   </React.StrictMode>,
   document.getElementById('root')
-);
+)
